@@ -26,7 +26,7 @@ class CartManager {
     async addProductToCart(cartId, productId) {
         const carts = await this.getCarts();
         const cart =  carts.find(c => c.id === cartId);
-        if (!cart) throw new Error('Carrito no ecnontrado');
+        if (!cart) throw new Error('Carrito no encontrado');
 
         const productIndex = cart.products.findIndex(p => p.product === productId);
         if(productIndex !== -1) {

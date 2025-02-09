@@ -1,10 +1,10 @@
 [
   {
     "id":1,
-    "title": "Producto 1",
-    "description": "Descripción del producto 1",
+    "title": "Moto G24",
+    "description": "Motorola",
     "code": "PROD001",
-    "price": 100,
+    "price": 100000,
     "status": true,
     "stock": 50,
     "category": "Categoría A",

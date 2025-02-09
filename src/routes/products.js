@@ -1,36 +1,25 @@
-import { Router } from "express";
-import ProductManager from "../manegers/productManager.js";
+// src/routes/productsRouter.js
+import express from 'express';
+import productManager from '../managers/productManager.js'; // Asegúrate de tener el manager de productos configurado
 
-const router = Router();
+const router = express.Router();
 
-const productManager = new ProductManager();
-
-router.get('/', async (req, res) => {
-    try {
-        const products = await productManager.getProducts(); 
-        res.json(products);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los productos' });
-    }
+// Definir las rutas para productos
+router.get('/', (req, res) => {
+  const products = productManager.getAll();  // O el método que uses para obtener productos
+  res.json(products);
 });
 
-router.post('/', async (req,res) => {
-    const product = req.body;
-    const result = await productManager.addProduct(product);
-    res.status(201).send(result)
+router.post('/', (req, res) => {
+  const { title, price } = req.body;
+  const newProduct = productManager.add({ title, price }); // Agregar producto
+  res.status(201).json(newProduct);
 });
 
-router.put('/:pid', async (req, res) => {
-    const { pid } = req.params;
-    const updates = req.body;
-    const result = await productManager.updateProduct(Number(pid), updates);
-    res.send(result)
-});
-
-router.delete('/:pid', async (req, res) => { 
-    const {pid} = req.params;
-    await productManager.deleteProduct(Number(pid))
-    res.status(204).send()
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  productManager.delete(id);  // Lógica para eliminar un producto
+  res.status(200).send('Producto eliminado');
 });
 
 export default router;
