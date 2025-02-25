@@ -1,3 +1,4 @@
+//managers/cartManager.js
 import fs from 'fs/promises'
 
 class CartManager {

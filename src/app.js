@@ -1,49 +1,48 @@
-// src/app.js
+//app.js
 import express from 'express';
-import { engine } from 'express-handlebars';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import viewsRouter from './routes/viewRouter.js';
-import productsRouter from './routes/products.js';
-import cartsRouter from './routes/cart.js';
-import { Server } from 'socket.io';
+import __dirname from './utils.js';
+import handlebars from 'express-handlebars';
+import mongoose from 'mongoose';
+import methodOverride from 'method-override';
+import exphbs from "express-handlebars";
 
-const app = express();
-const port = 8000;
+//importo los routers
+import viewsRouter from './routes/views.router.js'
+import productRouter from './routes/product.router.js'
+import cartRouter from './routes/cart.router.js'
 
-// Resolviendo __dirname en ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+ //Configuración dotenv
+ import dotenv from 'dotenv';
+ dotenv.config();
+ const PORT = process.env.PORT;
+ const URIMongoDB = process.env.URL_MONGODB
 
-// Configuración de Handlebars
-app.engine('handlebars', engine());  // Usamos express-handlebars para el motor
-app.set('views', path.join(__dirname, 'views')); // Establecemos la carpeta de vistas
-app.set('view engine', 'handlebars'); // Decimos que Handlebars es el motor
 
-// Middleware
+//constante para utilizar express
+const app = express()
+
+//configuración de json
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({extended:true}));
 
-// Rutas
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
-app.use('/', viewsRouter);
+//Motor de plantilla
+app.engine('handlebars', handlebars.engine());
+app.set('views', __dirname + '/views')
+app.set('view engine', 'handlebars')
 
-// Ruta para la página principal
-app.get('/', (req, res) => {
-    res.render('index', { title: 'Productos' });
-});
+//set public
+app.use(express.static(__dirname + '/public'))
 
+//conexiones
+const server = app.listen(PORT, () => {console.log(`Listening on port ${PORT}`)})
+mongoose.connect(URIMongoDB)
+    .then( ()=> console.log("Conexion realizada con exito"))
+    .catch((error) => console.error("Error al conectar con la base de datos". error))
 
-// Socket.io
-const server = app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+//reescribier e inetrpretar el valor  del campo _method de un formulario
+app.use(methodOverride("_method"))
 
-const io = new Server(server);
-io.on('connection', (socket) => {
-  console.log('A user connected');
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
-});
+//implemento los routers
+app.use('/', viewsRouter) //VISTAS res.render()
+app.use('/product', productRouter) //Operaciones CRUD renderizadas
+app.use('/cart', cartRouter)

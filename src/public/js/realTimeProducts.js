@@ -1,3 +1,4 @@
+// public/js/realTimeProducts.js
 const socket = io();
 
 // Escuchar actualizaciones de productos en tiempo real
@@ -6,7 +7,6 @@ socket.on("updateProducts", (products) => {
     productList.innerHTML = "";
     products.forEach(product => {
         const li = document.createElement("li");
-        li.id = `product-${product.id}`;
         li.innerHTML = `${product.title} - $${product.price} 
             <button onclick="deleteProduct(${product.id})">Eliminar</button>`;
         productList.appendChild(li);

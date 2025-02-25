@@ -1,3 +1,4 @@
+//managers/productManager.js
 import fs from 'fs/promises';
 
 let io; // Definir la variable sin inicializar
